@@ -22,7 +22,7 @@ jobs:
         run: dotnet tool update -g docfx
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore Bank
 
       - name: Generate metadata
         run: docfx metadata docfx_project/docfx.json
