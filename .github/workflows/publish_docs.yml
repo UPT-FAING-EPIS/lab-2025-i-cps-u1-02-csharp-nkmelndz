@@ -3,7 +3,7 @@ name: Build and Publish Docs
 on:
   push:
     branches:
-      - main  # O la rama que uses
+      - main  # O la rama   que uses
 
 jobs:
   build-docs:
