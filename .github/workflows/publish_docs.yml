@@ -25,7 +25,7 @@ jobs:
         run: dotnet restore Bank
 
       - name: Generate metadata
-        run: docfx metadata docfx_project/docfx.json
+        run: docfx metadata Bank/docfx.json
 
       - name: Build documentation
         run: docfx build docfx_project/docfx.json
