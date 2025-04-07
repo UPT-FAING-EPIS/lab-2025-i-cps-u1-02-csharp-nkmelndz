@@ -28,7 +28,7 @@ jobs:
         run: docfx metadata Bank/docfx.json
 
       - name: Build documentation
-        run: docfx build docfx_project/docfx.json
+        run: docfx build Bank/docfx.json
 
       - name: Upload docs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
