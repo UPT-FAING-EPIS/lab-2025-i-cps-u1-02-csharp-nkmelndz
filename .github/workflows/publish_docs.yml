@@ -1,0 +1,37 @@
+name: Build and Publish Docs
+
+on:
+  push:
+    branches:
+      - main  # O la rama que uses
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.303'
+
+      - name: Install DocFX
+        run: dotnet tool update -g docfx
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Generate metadata
+        run: docfx metadata docfx_project/docfx.json
+
+      - name: Build documentation
+        run: docfx build docfx_project/docfx.json
+
+      - name: Upload docs to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docfx_project/_site
