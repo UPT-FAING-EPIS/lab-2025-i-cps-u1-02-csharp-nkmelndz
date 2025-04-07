@@ -29,12 +29,12 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       
       - name: Subir reporte HTML como artefacto
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: snyk-report
           path: snyk-report.html
 
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: snyk.sarif
