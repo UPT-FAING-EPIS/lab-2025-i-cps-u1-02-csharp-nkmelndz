@@ -23,7 +23,10 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         
-      - name: Generar reporte HTML
+      - name: Instalar snyk-to-html
+        run: npm install -g snyk-to-html
+        
+      - name: Generar reporte HTML desde JSON
         run: snyk code test --json | snyk-to-html -o code-test-results.html
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
