@@ -42,7 +42,7 @@ jobs:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
 
       - name: Build the solution
-        run: dotnet build --no-restore
+        run: dotnet build Bank --no-restore
 
       - name: End SonarCloud analysis
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
