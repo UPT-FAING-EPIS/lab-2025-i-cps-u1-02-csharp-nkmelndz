@@ -1,6 +1,6 @@
 name: Snyk Analysis
 env:
-  DOTNET_VERSION: '8.0.303'  # La versión de .NET
+  DOTNET_VERSION: '8.0.303'  # La versió de .NET
 
 on: push
 
