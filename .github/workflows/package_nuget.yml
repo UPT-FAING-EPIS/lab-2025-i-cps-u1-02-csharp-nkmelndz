@@ -37,9 +37,16 @@ jobs:
             echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Begin SonarCloud analysis
-        run: dotnet sonarscanner begin /k:"si784_apibanco" /o:"si784" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        run: |
+              dotnet sonarscanner begin \
+                /k:"si784_apibanco" \
+                /o:"si784" \
+                /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+                /d:sonar.host.url="https://sonarcloud.io" \
+                /d:sonar.projectBaseDir="$GITHUB_WORKSPACE/bank"
         env:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
+          
 
       - name: Build the solution
         run: dotnet build Bank --no-restore
