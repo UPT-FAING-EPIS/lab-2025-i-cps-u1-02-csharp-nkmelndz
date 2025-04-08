@@ -43,7 +43,7 @@ jobs:
                 /o:"si784" \
                 /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
                 /d:sonar.host.url="https://sonarcloud.io" \
-                /d:sonar.projectBaseDir="$GITHUB_WORKSPACE/bank"
+                /d:sonar.projectBaseDir="$GITHUB_WORKSPACE/Bank"
         env:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
           
@@ -51,8 +51,8 @@ jobs:
         run: dotnet build Bank --no-restore
 
       - name: End SonarCloud analysis
+        working-directory: ./Bank
         run: 
-            cd Bank
             dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
         env:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
