@@ -32,7 +32,9 @@ jobs:
           path: 'Bank/**/TestResults/*.trx'
 
       - name: Install SonarScanner
-        run: dotnet tool install --global dotnet-sonarscanner
+        run: |
+            dotnet tool install --global dotnet-sonarscanner
+            echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Begin SonarCloud analysis
         run: dotnet sonarscanner begin /k:"si784_apibanco" /o:"si784" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
