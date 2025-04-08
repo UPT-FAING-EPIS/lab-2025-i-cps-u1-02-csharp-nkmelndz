@@ -37,7 +37,10 @@ jobs:
             echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
             
       - name: Ensure sh is available
-        run: sudo apt-get update && sudo apt-get install -y dash
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y dash
+            sudo ln -s /bin/dash /bin/sh  # Asegura que 'sh' esté vinculado a 'dash'
 
       - name: Begin SonarCloud analysis
         working-directory: ./Bank
