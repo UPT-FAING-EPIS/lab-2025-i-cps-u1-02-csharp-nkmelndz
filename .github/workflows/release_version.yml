@@ -19,16 +19,16 @@ jobs:
         dotnet-version: '6.0'  # Usa la versión de .NET que prefieras
 
     - name: Restore dependencies
-      run: dotnet restore ./Bank/Bank.csproj
+      run: dotnet restore ./Bank/Bank.WebApi/Bank.WebApi.csproj
 
     - name: Build project
-      run: dotnet build ./Bank/Bank.csproj --configuration Release
+      run: dotnet build ./Bank/Bank.WebApi/Bank.WebApi.csproj --configuration Release
 
     - name: Run unit tests
-      run: dotnet test ./Bank/Bank.csproj --configuration Release
+      run: dotnet test ./Bank/Bank.WebApi/Bank.WebApi.csproj --configuration Release
 
     - name: Publish project
-      run: dotnet publish ./Bank/Bank.csproj --configuration Release --output ./publish
+      run: dotnet publish ./Bank/Bank.WebApi/Bank.WebApi.csproj --configuration Release --output ./publish
 
     - name: Create release asset
       run: |
