@@ -16,7 +16,7 @@ jobs:
     - name: Set up .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '8.0.303'  # Usa la versión de .NET que prefieras
+        dotnet-version: '8.0.303'  # Usa la ve rsión de .NET que prefieras
 
     - name: Restore dependencies
       run: dotnet restore ./Bank/Bank.WebApi/Bank.WebApi.csproj
@@ -39,7 +39,7 @@ jobs:
       run: |
         git tag v$(date +'%Y%m%d%H%M%S')  # Crea una etiqueta con una fecha y hora única
         git push origin --tags  # Empuja la etiqueta recién creada
-        
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
