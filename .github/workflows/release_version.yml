@@ -1,0 +1,43 @@
+name: Build and Release Version
+
+on:
+  push:
+    tags:
+      - 'v*'  # Este workflow se activará cuando se haga push a una etiqueta que comience con 'v'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0'  # Usa la versión de .NET que prefieras
+
+    - name: Restore dependencies
+      run: dotnet restore ./Bank/Bank.csproj
+
+    - name: Build project
+      run: dotnet build ./Bank/Bank.csproj --configuration Release
+
+    - name: Run unit tests
+      run: dotnet test ./Bank/Bank.csproj --configuration Release
+
+    - name: Publish project
+      run: dotnet publish ./Bank/Bank.csproj --configuration Release --output ./publish
+
+    - name: Create release asset
+      run: |
+        zip -r release.zip ./publish
+        echo "Release zip created"
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: release.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
