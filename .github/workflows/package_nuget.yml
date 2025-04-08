@@ -57,8 +57,8 @@ jobs:
 
       - name: End SonarCloud analysis
         working-directory: ./Bank
-        run: |
-            bash -c "dotnet sonarscanner end /d:sonar.token=\"${{ secrets.SONAR_TOKEN }}\""
+        run: 
+            dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
         env:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
 
