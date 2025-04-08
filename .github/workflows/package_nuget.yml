@@ -35,12 +35,6 @@ jobs:
         run: |
             dotnet tool install --global dotnet-sonarscanner
             echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-            
-      - name: Ensure sh is available
-        run: |
-            sudo apt-get update
-            sudo apt-get install -y dash
-            sudo ln -s /bin/dash /bin/sh  # Asegura que 'sh' esté vinculado a 'dash'
 
       - name: Begin SonarCloud analysis
         working-directory: ./Bank
@@ -63,8 +57,8 @@ jobs:
 
       - name: End SonarCloud analysis
         working-directory: ./Bank
-        run: 
-            dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        run: |
+            bash -c "dotnet sonarscanner end /d:sonar.token=\"${{ secrets.SONAR_TOKEN }}\""
         env:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
 
