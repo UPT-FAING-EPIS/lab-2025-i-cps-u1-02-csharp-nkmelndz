@@ -71,9 +71,9 @@ jobs:
         run: dotnet pack Bank/Bank.WebApi/Bank.WebApi.csproj -c Release -o nuget
 
       - name: Publish to GitHub Packages
-        run: dotnet nuget push nuget/*.nupkg --source "https://nuget.pkg.github.com/nkmelndz/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet nuget push nuget/*.nupkg --source "https://nuget.pkg.github.com/nkmelndz/index.json" --api-key ${{ secrets.GHTOKEN }}
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_AUTH_TOKEN: ${{ secrets.GHTOKEN }}
 
       - name: Add GitHub NuGet source
-        run: dotnet nuget add source --username <USERNAME> --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/<USERNAME>/index.json"
+        run: dotnet nuget add source --username <USERNAME> --password ${{ secrets.GHTOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/<USERNAME>/index.json"
