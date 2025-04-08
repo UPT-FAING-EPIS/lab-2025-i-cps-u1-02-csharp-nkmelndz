@@ -37,6 +37,7 @@ jobs:
             echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Begin SonarCloud analysis
+        working-directory: ./Bank
         run: |
               dotnet sonarscanner begin \
                 /k:"si784_apibanco" \
@@ -49,6 +50,10 @@ jobs:
           
       - name: Build the solution
         run: dotnet build Bank --no-restore
+
+      - name: Test
+        working-directory: ./Bank
+        run: dotnet test --collect:"XPlat Code Coverage"
 
       - name: End SonarCloud analysis
         working-directory: ./Bank
