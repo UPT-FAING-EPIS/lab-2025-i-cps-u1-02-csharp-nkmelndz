@@ -32,10 +32,6 @@ jobs:
         with:
           name: test-results
           path: 'Bank/**/TestResults/*.trx'
-          
-      - name: Install sh (busybox)
-        run: apk add --no-cache busybox
-        if: runner.os == 'Linux'
 
       - name: Install SonarScanner
         run: |
@@ -60,6 +56,15 @@ jobs:
       - name: Test
         working-directory: ./Bank
         run: dotnet test --collect:"XPlat Code Coverage"
+
+      - name: Verificar si 'sh' está instalado
+        run: |
+          if command -v sh; then
+            echo "✅ 'sh' está disponible"
+          else
+            echo "❌ 'sh' NO está disponible"
+            exit 1
+          fi
 
       - name: End SonarCloud analysis
         working-directory: ./Bank
