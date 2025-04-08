@@ -35,6 +35,11 @@ jobs:
         zip -r release.zip ./publish
         echo "Release zip created"
 
+    - name: Create release tag
+      run: |
+        git tag v$(date +'%Y%m%d%H%M%S')  # Crea una etiqueta con una fecha y hora única
+        git push origin --tags  # Empuja la etiqueta recién creada
+        
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
