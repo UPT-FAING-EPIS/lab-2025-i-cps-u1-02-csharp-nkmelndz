@@ -73,6 +73,9 @@ jobs:
         env:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
 
+      - name: Ensure nuget directory exists
+        run: mkdir -p nuget
+        
       - name: Pack NuGet package
         run: dotnet pack Bank/Bank.WebApi/Bank.WebApi.csproj -c Release -o nuget
 
