@@ -23,7 +23,7 @@ jobs:
         run: dotnet restore Bank
 
       - name: Run tests
-        run: dotnet Bank test --collect:"XPlat Code Coverage"
+        run: dotnet test Bank --collect:"XPlat Code Coverage"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
