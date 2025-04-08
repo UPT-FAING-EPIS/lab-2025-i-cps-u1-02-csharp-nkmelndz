@@ -2,8 +2,8 @@ name: Build and Release Version
 
 on:
   push:
-    tags:
-      - 'v*'  # Este workflow se activará cuando se haga push a una etiqueta que comience con 'v'
+    branches:
+        - main
 
 jobs:
   build:
