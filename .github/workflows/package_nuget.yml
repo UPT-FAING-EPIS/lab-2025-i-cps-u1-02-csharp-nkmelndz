@@ -20,7 +20,7 @@ jobs:
           dotnet-version: '8.0.303' # o el que uses
 
       - name: Restore dependencies
-        run: dotnet Bank restore
+        run: dotnet restore Bank
 
       - name: Run tests
         run: dotnet Bank test --collect:"XPlat Code Coverage"
