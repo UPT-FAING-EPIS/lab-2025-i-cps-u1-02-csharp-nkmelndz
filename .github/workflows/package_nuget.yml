@@ -76,4 +76,4 @@ jobs:
           NUGET_AUTH_TOKEN: ${{ secrets.GHTOKEN }}
 
       - name: Add GitHub NuGet source
-        run: dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GHTOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+        run: dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GHTOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
