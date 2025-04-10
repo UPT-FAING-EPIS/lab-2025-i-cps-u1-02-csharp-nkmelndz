@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: 'Bank/Bank.WebApi.Tests/TestResults/**/*.xml'
+          path: 'Bank/Bank.WebApi.Tests/TestResults/**/*.yml'
 
       - name: Install SonarScanner
         run: |
@@ -71,7 +71,7 @@ jobs:
         run: dotnet pack Bank/Bank.WebApi/Bank.WebApi.csproj -c Release -o nuget
 
       - name: Publish to GitHub Packages
-        run: dotnet nuget push nuget/*.nupkg --source "https://nuget.pkg.github.com/nkmelndz/index.json" --api-key ${{ secrets.GHTOKEN }} --skip-duplicate --verbosity detailed
+        run: dotnet nuget push nuget/*.nupkg --source "https://nuget.pkg.github.com/nkmelndz/index.json" --api-key ${{ secrets.GHTOKEN }} --skip-duplicate
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.GHTOKEN }}
 
