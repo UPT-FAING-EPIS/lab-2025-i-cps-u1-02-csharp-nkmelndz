@@ -64,8 +64,14 @@ jobs:
         env:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
 
+      - name: Restore dependencies
+        run: dotnet restore "Bank/Bank.sln"
+
+      - name: Build solution
+        run: dotnet build "Bank/Bank.sln" --no-restore --configuration Release
+        
       - name: Ensure nuget directory exists
-        run: mkdir -p nuget
+        run: mkdir -p packages
         
       - name: Pack NuGet package
         run: |
