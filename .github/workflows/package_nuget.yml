@@ -1,91 +1,106 @@
 name: Build and Publish NuGet Package
-
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/dotnet/sdk:7.0
+      image: mcr.microsoft.com/dotnet/sdk:8.0
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.303' # o el que uses
+          dotnet-version: "8.0.x"
+
+      # Configurar fuente NuGet ANTES de otras operaciones
+      - name: Add GitHub NuGet source
+        run: |
+          dotnet nuget add source \
+            --username ${{ github.repository_owner }} \
+            --password ${{ secrets.GITHUB_TOKEN }} \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: Restore dependencies
         run: dotnet restore Bank
 
+      - name: Install SonarScanner
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Begin SonarCloud analysis
+        working-directory: ./Bank
+        run: |
+          dotnet sonarscanner begin \
+            /k:"si784_apibanco" \
+            /o:"si784" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.projectBaseDir="$GITHUB_WORKSPACE/Bank"
+        env:
+          PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
+
+      - name: Build the solution
+        run: dotnet build Bank --no-restore
+
       - name: Run tests
-        run: dotnet test Bank --collect:"XPlat Code Coverage"
+        working-directory: ./Bank
+        run: dotnet test --collect:"XPlat Code Coverage" --logger trx --results-directory TestResults
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: 'Bank/Bank.WebApi.Tests/TestResults/**/*.yml'
-
-      - name: Install SonarScanner
-        run: |
-            dotnet tool install --global dotnet-sonarscanner
-            echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-
-      - name: Begin SonarCloud analysis
-        working-directory: ./Bank
-        run: |
-              dotnet sonarscanner begin \
-                /k:"si784_apibanco" \
-                /o:"si784" \
-                /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
-                /d:sonar.host.url="https://sonarcloud.io" \
-                /d:sonar.projectBaseDir="$GITHUB_WORKSPACE/Bank"
-        env:
-          PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
-          
-      - name: Build the solution
-        run: dotnet build Bank --no-restore
-
-      - name: Test
-        working-directory: ./Bank
-        run: dotnet test --collect:"XPlat Code Coverage"
+          path: "Bank/TestResults/**/*"
+        if: always()
 
       - name: End SonarCloud analysis
         working-directory: ./Bank
-        run: 
-            dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
         env:
           PATH: ${{ github.workspace }}/.dotnet/tools:$PATH
 
-      - name: Restore dependencies
-        run: dotnet restore "Bank/Bank.sln"
+      - name: Build solution for Release
+        run: dotnet build "Bank/Bank.sln" --configuration Release --no-restore
 
-      - name: Build solution
-        run: dotnet build "Bank/Bank.sln" --no-restore --configuration Release
-        
-      - name: Ensure nuget directory exists
+      - name: Ensure packages directory exists
         run: mkdir -p packages
-        
+
       - name: Pack NuGet package
         run: |
-          dotnet pack Bank/Bank.WebApi/Bank.WebApi.csproj -c Release \
-              -p:PackageId=Bank.WebApi.U1Lab02 \
-              -p:PackageVersion=202.207.4262 \
-              -p:RepositoryUrl=https://github.com/${{ github.repository }} \
-              -p:RepositoryType=git \
-              --output ./packages
+          dotnet pack Bank/Bank.WebApi/Bank.WebApi.csproj \
+            --configuration Release \
+            --no-build \
+            --output ./packages \
+            -p:PackageId=Bank.WebApi.U1Lab02 \
+            -p:PackageVersion=1.0.${{ github.run_number }} \
+            -p:RepositoryUrl=https://github.com/${{ github.repository }} \
+            -p:RepositoryType=git \
+            -p:Authors="${{ github.repository_owner }}" \
+            -p:Description="Bank Web API Package"
+
+      - name: List generated packages
+        run: ls -la packages/
 
       - name: Publish to GitHub Packages
-        run: dotnet nuget push packages/*.nupkg --source "https://nuget.pkg.github.com/nkmelndz/index.json" --api-key ${{ secrets.GHTOKEN }} --skip-duplicate
+        run: |
+          dotnet nuget push packages/*.nupkg \
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+            --api-key ${{ secrets.GITHUB_TOKEN }} \
+            --skip-duplicate
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.GHTOKEN }}
-
-      - name: Add GitHub NuGet source
-        run: dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GHTOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/UPT-FAING-EPIS/index.json"
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
